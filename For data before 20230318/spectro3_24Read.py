@@ -28,12 +28,12 @@ dt_major = 3600.;
 dt_minor = 600.;
 
 home = str(Path.home())
-dirpath = home+"/Data/Spectro_3_24G/2023/03/18/"
+dirpath = home+"/Data/Spectro_3_24G/2023/03/17/"
 # filename = "spectro324_20221214T160516.fit"
 # hdulist = fits.open(dirpath+filename)
 dirlist = os.listdir(dirpath)
 print (dirlist)
-filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230318T*.fit'))
+filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230317T*.fit'))
 print(len(filelist))
 print(filelist)
 i = 0;
@@ -44,7 +44,7 @@ for filename in filelist:
     if i == 0:
         datarcp = hdulist[1].data['DataRCP']
         datalcp = hdulist[1].data['DataLCP']
-        time = hdulist[1].data['timeRCP']
+        time = hdulist[1].data['time']
         freq = hdulist[1].data['frequency']
         # channels = int(hdulist[0].header['CHANNELS'])
         date = hdulist[0].header['DATE-OBS']
@@ -54,7 +54,7 @@ for filename in filelist:
     else:
         datarcp = np.concatenate([datarcp, hdulist[1].data['DataRCP']])
         datalcp = np.concatenate([datalcp, hdulist[1].data['DataLCP']])
-        time = np.concatenate([time, hdulist[1].data['timeRCP']])
+        time = np.concatenate([time, hdulist[1].data['time']])
         # print(data.shape)
     print(filename)
     i = i + 1

@@ -30,17 +30,16 @@ def hhmm_format(t,pos):
 dt_major = 3600.;
 dt_minor = 600.;
 
-channel = 18
-
 home = str(Path.home())
-dirpath = home+"/Data/Spectro_3_24G/2023/03/19/"
+dirpath = home+"/Data/Spectro_3_24G/2023/03/17/"
 # filename = "spectro324_20221214T160516.fit"
 # hdulist = fits.open(dirpath+filename)
 dirlist = os.listdir(dirpath)
-filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230319T*.fit'))
+filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230317T*.fit'))
 print(len(filelist))
 print(filelist)
 i = 0;
+channel = 42
 
 for filename in filelist:
     hdulist = fits.open(dirpath+filename)
@@ -48,7 +47,7 @@ for filename in filelist:
     if i == 0:
         dataR = hdulist[1].data['DataRCP']
         dataL = hdulist[1].data['DataLCP']
-        time = hdulist[1].data['timeRCP']
+        time = hdulist[1].data['time']
         freq = hdulist[1].data['frequency']
         # channels = int(hdulist[0].header['CHANNELS'])
         date = hdulist[0].header['DATE-OBS']
@@ -58,7 +57,7 @@ for filename in filelist:
     else:
         dataR = np.concatenate([dataR, hdulist[1].data['DataRCP']])
         dataL = np.concatenate([dataL, hdulist[1].data['DataLCP']])
-        time = np.concatenate([time, hdulist[1].data['timeRCP']])
+        time = np.concatenate([time, hdulist[1].data['time']])
         # print(data.shape)
     print(filename)
     i = i + 1
@@ -100,7 +99,7 @@ locator = mdates.AutoDateLocator()
 ax.xaxis.set_major_locator(lab.MultipleLocator(dt_major));
 ax.xaxis.set_major_formatter(lab.FuncFormatter(hhmm_format));
 ax.xaxis.set_minor_locator(lab.MultipleLocator(dt_minor));
-ax.xaxis.set_minor_formatter(lab.FuncFormatter(hhmm_format));
+# ax.xaxis.set_minor_formatter(lab.FuncFormatter(hhmm_format));
 plt.xlim(time_axis[0],time_axis[timenum-1])
 plt.xlabel("UT Time, hours",fontsize=12)
 plt.title(date + "   Badary SMDD 3-24 GHz" + ",    F, MHz ="+str("%.2i" % chfreq), fontsize=12)

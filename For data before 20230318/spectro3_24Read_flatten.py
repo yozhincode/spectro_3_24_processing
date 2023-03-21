@@ -28,12 +28,9 @@ dt_major = 3600.;
 dt_minor = 600.;
 
 home = str(Path.home())
-dirpath = home+"/Data/Spectro_3_24G/2023/03/18/"
-# filename = "spectro324_20221214T160516.fit"
-# hdulist = fits.open(dirpath+filename)
+dirpath = home+"/Data/Spectro_3_24G/2023/02/26/"
 dirlist = os.listdir(dirpath)
-print (dirlist)
-filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230318T*.fit'))
+filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230226T*.fit'))
 print(len(filelist))
 print(filelist)
 i = 0;
@@ -44,7 +41,7 @@ for filename in filelist:
     if i == 0:
         datarcp = hdulist[1].data['DataRCP']
         datalcp = hdulist[1].data['DataLCP']
-        time = hdulist[1].data['timeRCP']
+        time = hdulist[1].data['time']
         freq = hdulist[1].data['frequency']
         # channels = int(hdulist[0].header['CHANNELS'])
         date = hdulist[0].header['DATE-OBS']
@@ -54,7 +51,7 @@ for filename in filelist:
     else:
         datarcp = np.concatenate([datarcp, hdulist[1].data['DataRCP']])
         datalcp = np.concatenate([datalcp, hdulist[1].data['DataLCP']])
-        time = np.concatenate([time, hdulist[1].data['timeRCP']])
+        time = np.concatenate([time, hdulist[1].data['time']])
         # print(data.shape)
     print(filename)
     i = i + 1
@@ -85,33 +82,33 @@ print (datalcp.shape)
 # data_repack = np.concatenate((data36, data612, data1224), axis=1)
 # print (data_repack.shape)
 
-spltarr_rcp = np.hsplit(datarcp,3)
-spltarr_lcp = np.hsplit(datalcp,3)
-print (spltarr_rcp[0].shape)
+avgFrcp = np.zeros(48)
+avgFlcp = np.zeros(48)
 
-data36 = spltarr_rcp[0]
-data612 = spltarr_rcp[1]
-data1224 = spltarr_rcp[2]
-min36 = np.min(data36)
-min612 = np.min(data612)
-min1224 = np.min(data1224)
+# plt.figure(figsize = (15,5))
 
-data36_lcp = spltarr_lcp[0]
-data612_lcp = spltarr_lcp[1]
-data1224_lcp = spltarr_lcp[2]
-min36_lcp = np.min(data36_lcp)
-min612_lcp = np.min(data612_lcp)
-min1224_lcp = np.min(data1224_lcp)
-
-# data_repack = np.concatenate((data36/2.5, data612, data1224/200.0), axis=1)
-data_repack_rcp = np.concatenate(((data36-min36)*2.0, (data612-min612)*1.0, (data1224-min1224)*2.0), axis=1)
-data_repack_lcp = np.concatenate(((data36_lcp-min36_lcp)*2.0, (data612_lcp-min612_lcp)*1.0, (data1224_lcp-min1224_lcp)*2.0), axis=1)
-
-print (data_repack_rcp.shape)
-
+for j in range(48):
+    dataFrcp = datarcp[:,j]
+    dataFlcp = datalcp[:,j]
+    avgFrcp[j] = np.average(dataFrcp)
+    avgFlcp[j] = np.average(dataFlcp)
+    datarcp[:,j] = datarcp[:,j]/avgFrcp[j]
+    datalcp[:,j] = datalcp[:,j]/avgFlcp[j]
+    # line, = plt.plot(time_axis, dataF)
+    # ax = plt.gca()
+    
+    
+# locator = mdates.AutoDateLocator()
+# # formatter = mdates.AutoDateFormatter(locator)
+# # ax.xaxis.set_major_locator(locator)
+# # ax.xaxis.set_major_formatter(formatter)
+# ax.xaxis.set_major_locator(lab.MultipleLocator(dt_major));
+# ax.xaxis.set_major_formatter(lab.FuncFormatter(hhmm_format));
+# ax.xaxis.set_minor_locator(lab.MultipleLocator(dt_minor));
+    
 plt.figure(figsize = (15,7))
 
-plt.imshow(data_repack_rcp.T,
+plt.imshow(datarcp.T,
             cmap="rainbow", 
             aspect = "auto",
             origin='lower',
@@ -133,7 +130,7 @@ plt.show()
 
 plt.figure(figsize = (15,7))
 
-plt.imshow(data_repack_lcp.T,
+plt.imshow(datalcp.T,
             cmap="rainbow", 
             aspect = "auto",
             origin='lower',
@@ -150,37 +147,3 @@ plt.xlabel("UT Time, hours",fontsize=10)
 plt.yticks(range(len(y)),y)
 plt.title(date + "   3-24GHZ LCP", fontsize=12)
 plt.show()
-
-# plt.imshow(data36.T,
-#             cmap="rainbow", 
-#             aspect = "auto",
-#             origin='lower',
-#             interpolation='bilinear',
-#             extent=[0, 50, 3.0, 6.0]
-#             )
-# plt.title("3-6 GHz", fontsize=16)
-# plt.show()
-
-# plt.figure(figsize = (15,5))
-
-# plt.imshow(data612.T,
-#             cmap="rainbow", 
-#             aspect = "auto",
-#             origin='lower',
-#             interpolation='bilinear',
-#             extent=[0, 50, 6.0, 12.0]
-#             )
-# plt.title("6-12 GHz", fontsize=16)
-# plt.show()
-
-# plt.figure(figsize = (15,5))
-
-# plt.imshow(data1224.T,
-#             cmap="rainbow", 
-#             aspect = "auto",
-#             origin='lower',
-#             interpolation='bilinear',
-#             extent=[0, 50, 12.0, 24.0]
-#             )
-# plt.title("12-24 GHz", fontsize=16)
-# plt.show()

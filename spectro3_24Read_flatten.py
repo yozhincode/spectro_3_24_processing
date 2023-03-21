@@ -28,9 +28,9 @@ dt_major = 3600.;
 dt_minor = 600.;
 
 home = str(Path.home())
-dirpath = home+"/Data/Spectro_3_24G/2023/02/14/"
+dirpath = home+"/Data/Spectro_3_24G/2023/02/26/"
 dirlist = os.listdir(dirpath)
-filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230214T02*.fit'))
+filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230226T*.fit'))
 print(len(filelist))
 print(filelist)
 i = 0;
@@ -56,8 +56,8 @@ for filename in filelist:
     print(filename)
     i = i + 1
     hdulist.close()
-    if i == 3:
-        break
+    # if i == 3:
+    #     break
 print (datarcp.shape)
 print (time.shape)
 print (time)
