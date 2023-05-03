@@ -31,15 +31,15 @@ dt_major = 3600.;
 dt_minor = 600.;
 
 home = str(Path.home())
-dirpath = home+"/Data/Spectro_3_24G/2023/03/17/"
+dirpath = home+"/Data/Spectro_3_24G/2023/02/15/"
 # filename = "spectro324_20221214T160516.fit"
 # hdulist = fits.open(dirpath+filename)
 dirlist = os.listdir(dirpath)
-filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230317T*.fit'))
+filelist = sorted(fnmatch.filter(dirlist, 'spectro324G_20230215T*.fit'))
 print(len(filelist))
 print(filelist)
 i = 0;
-channel = 42
+channel = 14
 
 for filename in filelist:
     hdulist = fits.open(dirpath+filename)
